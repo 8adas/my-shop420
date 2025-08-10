@@ -6,46 +6,49 @@
   <title>Sklep</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
 
-  <ul class="products">
-    <li class="product">
-      <img src="images/koszulka.jpg" alt="Koszulka" />
-      <h2>Koszulka</h2>
-      <p class="price">49,99 PLN</p>
-      <button>Dodaj</button>
-    </li>
-    <li class="product">
-      <img src="images/spodnie.jpg" alt="Spodnie" />
-      <h2>Spodnie</h2>
-      <p class="price">89,99 PLN</p>
-      <button>Dodaj</button>
-    </li>
-    <li class="product">
-      <img src="images/czapka.jpg" alt="Czapka" />
-      <h2>Czapka</h2>
-      <p class="price">29,99 PLN</p>
-      <button>Dodaj</button>
-    </li>
-    <li class="product">
-      <img src="images/koszulka.jpg" alt="Koszulka" />
-      <h2>Koszulka</h2>
-      <p class="price">49,99 PLN</p>
-      <button>Dodaj</button>
-    </li>
-    <li class="product">
-      <img src="images/koszulka.jpg" alt="Koszulka" />
-      <h2>Koszulka</h2>
-      <p class="price">49,99 PLN</p>
-      <button>Dodaj</button>
-    </li>
-    <li class="product">
-      <img src="images/koszulka.jpg" alt="Koszulka" />
-      <h2>Koszulka</h2>
-      <p class="price">49,99 PLN</p>
-      <button>Dodaj</button>
-    </li>
-  </ul>
+  <div id="mainContent" style="display:none;">
+    <ul class="products">
+      <li class="product">
+        <img src="images/koszulka.jpg" alt="Koszulka" />
+        <h2>Koszulka</h2>
+        <p class="price">49,99 PLN</p>
+        <button>Dodaj</button>
+      </li>
+      <li class="product">
+        <img src="images/spodnie.jpg" alt="Spodnie" />
+        <h2>Spodnie</h2>
+        <p class="price">89,99 PLN</p>
+        <button>Dodaj</button>
+      </li>
+      <li class="product">
+        <img src="images/czapka.jpg" alt="Czapka" />
+        <h2>Czapka</h2>
+        <p class="price">29,99 PLN</p>
+        <button>Dodaj</button>
+      </li>
+      <li class="product">
+        <img src="images/koszulka.jpg" alt="Koszulka" />
+        <h2>Koszulka</h2>
+        <p class="price">49,99 PLN</p>
+        <button>Dodaj</button>
+      </li>
+      <li class="product">
+        <img src="images/koszulka.jpg" alt="Koszulka" />
+        <h2>Koszulka</h2>
+        <p class="price">49,99 PLN</p>
+        <button>Dodaj</button>
+      </li>
+      <li class="product">
+        <img src="images/koszulka.jpg" alt="Koszulka" />
+        <h2>Koszulka</h2>
+        <p class="price">49,99 PLN</p>
+        <button>Dodaj</button>
+      </li>
+    </ul>
+  </div>
 
   <!-- Modal logowania i rejestracji -->
   <div id="authModal" class="modal">
@@ -54,15 +57,15 @@
       <div class="form-container">
         <form id="loginForm">
           <h2>Logowanie</h2>
-          <input type="text" placeholder="Login" required />
-          <input type="password" placeholder="Hasło" required />
+          <input type="email" id="loginEmail" placeholder="Email" required />
+          <input type="password" id="loginPassword" placeholder="Hasło" required />
           <button type="submit">Zaloguj się</button>
           <p>Nie masz konta? <a href="#" id="showRegister">Zarejestruj się</a></p>
         </form>
         <form id="registerForm" style="display:none;">
           <h2>Rejestracja</h2>
-          <input type="text" placeholder="Login" required />
-          <input type="password" placeholder="Hasło" required />
+          <input type="email" id="registerEmail" placeholder="Email" required />
+          <input type="password" id="registerPassword" placeholder="Hasło" required />
           <button type="submit">Zarejestruj się</button>
           <p>Masz konto? <a href="#" id="showLogin">Zaloguj się</a></p>
         </form>
@@ -70,27 +73,38 @@
     </div>
   </div>
 
+  <!-- Firebase SDK (compat version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
   <script>
+    // Konfiguracja Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAvl1-M_XKLftUzhGjEcaLL8dChQE3q64",
+      authDomain: "my-shop420-2bcf6.firebaseapp.com",
+      projectId: "my-shop420-2bcf6",
+      storageBucket: "my-shop420-2bcf6.appspot.com",
+      messagingSenderId: "138534596698",
+      appId: "1:138534596698:web:a6345e65703d9bddc52863",
+      measurementId: "G-J7MSRTCPJ6"
+    };
+
+    // Inicjalizacja Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
     const authModal = document.getElementById('authModal');
     const closeModalBtn = document.getElementById('closeModal');
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const showRegisterLink = document.getElementById('showRegister');
     const showLoginLink = document.getElementById('showLogin');
+    const mainContent = document.getElementById('mainContent');
 
-    // Pokaż modal natychmiast po załadowaniu strony
+    // Pokazujemy modal od razu i blokujemy scroll
     window.onload = () => {
       authModal.style.display = 'flex';
-      // Blokujemy scroll strony pod spodem
       document.body.style.overflow = 'hidden';
-    };
-
-    // Zamknięcie modala tylko jeśli chcesz (tutaj możesz wyłączyć)
-    closeModalBtn.onclick = () => {
-      // Możesz tutaj wymusić brak zamykania modal, ale ja zostawię możliwość zamknięcia
-      // Jeśli chcesz wymusić, usuń ten event handler lub go zakomentuj
-      // authModal.style.display = 'none';
-      // document.body.style.overflow = 'auto';
     };
 
     // Przełączanie formularzy
@@ -106,29 +120,68 @@
       loginForm.style.display = 'block';
     };
 
-    // Obsługa submit (na razie tylko alert i ukrycie modala)
+    // Obsługa logowania
     loginForm.onsubmit = (e) => {
       e.preventDefault();
-      alert('Zalogowano!');
-      authModal.style.display = 'none';
-      document.body.style.overflow = 'auto'; // odblokuj scroll po zalogowaniu
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          alert('Zalogowano pomyślnie!');
+          authModal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        })
+        .catch(error => {
+          alert('Błąd logowania: ' + error.message);
+        });
     };
 
+    // Obsługa rejestracji
     registerForm.onsubmit = (e) => {
       e.preventDefault();
-      alert('Zarejestrowano!');
-      authModal.style.display = 'none';
-      document.body.style.overflow = 'auto'; // odblokuj scroll po rejestracji
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          alert('Zarejestrowano pomyślnie!');
+          authModal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        })
+        .catch(error => {
+          alert('Błąd rejestracji: ' + error.message);
+        });
     };
 
-    // Blokuj kliknięcie poza modalem, żeby go nie zamknąć
+    // Nasłuchujemy zmiany stanu logowania
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // Użytkownik zalogowany
+        mainContent.style.display = 'block';
+        authModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      } else {
+        // Użytkownik wylogowany
+        mainContent.style.display = 'none';
+        authModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    // Nie zamykamy modala przy kliknięciu poza modal
     window.onclick = (event) => {
       if (event.target === authModal) {
-        // nic nie rób, blokujemy kliknięcie poza modalem
+        // nic nie rób
       }
     };
 
+    // Opcjonalnie blokujemy zamknięcie modala na przycisk X
+    closeModalBtn.onclick = () => {
+      // Możesz tu zostawić pustą funkcję, żeby nie zamykał
+    };
   </script>
 
 </body>
 </html>
+
